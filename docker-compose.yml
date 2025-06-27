@@ -2,23 +2,29 @@ services:
   db:
     image: postgres:14
     environment:
-      POSTGRES_DB:   ${DB_DATABASE}
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB:   ${DB_DATABASE:-testdb}
+      POSTGRES_USER: ${DB_USERNAME:-testuser}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-testpass}
     volumes:
       - db_data:/var/lib/postgresql/data
 
   redis:
     image: redis:7
     ports:
-      - "${REDIS_PORT}:6379"
+      - "${REDIS_PORT:-6379}:6379"
 
   php-fpm:
     build:
       context: .
       dockerfile: php/Dockerfile
-    env_file:
-      - .env
+    environment:
+      # вот здесь подаём все нужные скрипту переменные
+      DB_HOST:      ${DB_HOST:-db}
+      DB_DATABASE:  ${DB_DATABASE:-testdb}
+      DB_USERNAME:  ${DB_USERNAME:-testuser}
+      DB_PASSWORD:  ${DB_PASSWORD:-testpass}
+      REDIS_HOST:   ${REDIS_HOST:-redis}
+      REDIS_PORT:   ${REDIS_PORT:-6379}
     depends_on:
       - db
       - redis

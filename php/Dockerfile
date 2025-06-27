@@ -24,10 +24,6 @@ WORKDIR /var/www
 COPY composer.json ./
 RUN composer install --no-dev --optimize-autoloader
 
-#
-# ————— КОПИРУЕМ КОД ПРИЛОЖЕНИЯ —
-#
-
 # Теперь переключаемся в /var/www/html
 WORKDIR /var/www/html
 
@@ -36,5 +32,3 @@ COPY src/ ./
 
 # Опционально, выставим права
 RUN chown -R www-data:www-data /var/www
-
-# По умолчанию PHP-FPM слушает порт 9000
